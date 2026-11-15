@@ -3,17 +3,37 @@
   "use strict";
 
   // ---------------- Recipes (original, see 06_RECIPE_SCHEMA in the research repo) ----------------
+  const clone = o => JSON.parse(JSON.stringify(o));
+  // v2: looks tuned by eye toward publicly described film-style traits (muted slide, hard negative,
+  // amber print, soft portrait, vivid slide, cinema). Original names; not Fujifilm simulations.
+  // hsl band = [centerHue, hueShift°, satScale, lumShift]; st/ht = shadow/highlight tint offsets (sRGB).
+  const D = { ev: 0, hl: 0, sh: 0, con: 0, sat: 0, skin: 0.5, cd: 0, blue: 0, wr: 0, wb: 0, gr: 0.2, gs: 0.8, fade: 0, st: [0, 0, 0], ht: [0, 0, 0], hsl: [] };
+  const R = o => Object.assign(clone(D), o);
   const BUILTIN = [
-    { id: "noel", name: "Noel Ánh Vàng", ev: 0, hl: -1, sh: 2, con: 0.15, sat: 1, skin: 0.6, cd: 0.8, wr: 2, wb: -3, gr: 0.35, gs: 1.6,
-      hsl: [[30, -5, 0.1, 0.05], [220, 8, -0.3, -0.1]] },
-    { id: "pho", name: "Phố Hoài Niệm", ev: 0, hl: 0, sh: 3, con: 0.2, sat: -2, skin: 0.4, cd: 1.0, wr: 0, wb: 1, gr: 0.25, gs: 0.8,
-      hsl: [[220, -10, -0.2, 0], [120, 10, -0.3, 0]] },
-    { id: "chandung", name: "Chân Dung Dịu", ev: 0.1, hl: -1, sh: -1, con: -0.3, sat: -1, skin: 1.0, cd: 0, wr: 1, wb: 0, gr: 0.1, gs: 0.8, hsl: [] },
-    { id: "rung", name: "Rừng Xanh Trầm", ev: 0, hl: 0, sh: 1, con: 0.1, sat: 0, skin: 0.5, cd: 1.2, wr: 0, wb: 0, gr: 0.2, gs: 0.8,
-      hsl: [[120, -8, 0.15, -0.25], [60, -10, 0, -0.1]] },
-    { id: "bw", name: "Đen Trắng Nghệ Thuật", ev: 0, hl: 1, sh: 2, con: 0.25, sat: 0, skin: 0, cd: 0, wr: 0, wb: 0, gr: 0.45, gs: 1.6, hsl: [],
-      mono: "yellow", warm: 0.1 },
-    { id: "goc", name: "Không màu phim", ev: 0, hl: 0, sh: 0, con: 0, sat: 0, skin: 0, cd: 0, wr: 0, wb: 0, gr: 0, gs: 0.8, hsl: [] }
+    R({ id: "pho", name: "Phố Hoài Niệm", note: "Màu dịu, tối sâu, xanh dương ngả lơ",
+      hl: 1, sh: 2, con: 0.12, sat: -2, cd: 1.0, blue: 0.6, gr: 0.3, st: [-0.012, 0.0, 0.018], ht: [0.006, 0.004, -0.004],
+      hsl: [[0, 12, -0.25, 0], [35, 0, -0.15, 0], [60, -8, -0.45, -0.02], [120, -18, -0.45, -0.04], [215, -18, 0.05, -0.05], [300, 0, -0.6, 0]] }),
+    R({ id: "amban", name: "Âm Bản Đường Phố", note: "Tương phản cứng, đỏ cam giữ màu, xanh lá ngả lam",
+      hl: 2, sh: 1, con: 0.18, sat: 1, cd: 1.2, blue: 0.3, gr: 0.35, fade: 0.035, st: [-0.01, 0.012, 0.016], ht: [0.012, -0.006, 0.006],
+      hsl: [[10, 4, 0.1, 0], [55, -6, -0.45, -0.03], [120, 28, -0.35, -0.05], [190, 6, -0.35, 0], [225, 0, -0.35, -0.03], [300, -10, -0.3, 0]] }),
+    R({ id: "noel", name: "Noel Ánh Vàng", note: "Vùng sáng hổ phách, vùng tối nâu đậm",
+      hl: 0, sh: 2, con: 0.1, sat: 0, cd: 0.8, wr: 2, wb: -3, gr: 0.35, gs: 1.6, fade: 0.02, st: [0.012, 0.0, -0.014], ht: [0.03, 0.012, -0.03],
+      hsl: [[30, -4, 0.1, 0.02], [120, 15, -0.35, -0.03], [220, 10, -0.4, -0.05]] }),
+    R({ id: "chandung", name: "Chân Dung Dịu", note: "Chuyển tông mềm, da tự nhiên",
+      ev: 0.1, hl: -1, sh: -1, con: -0.15, sat: -1, skin: 1.0, wr: 1, gr: 0.12, ht: [0.008, 0.004, 0],
+      hsl: [[25, -3, -0.05, 0.03], [120, 8, -0.25, 0], [215, -6, -0.2, 0]] }),
+    R({ id: "rucro", name: "Rực Rỡ Phong Cảnh", note: "Bão hòa cao, tương phản mạnh",
+      hl: 1, sh: 1, con: 0.22, sat: 3, skin: 0.7, cd: 0.6, blue: 0.4, gr: 0.1,
+      hsl: [[120, 4, 0.2, -0.04], [215, -4, 0.2, -0.06], [60, 0, 0.1, 0]] }),
+    R({ id: "dienanh", name: "Điện Ảnh Trầm", note: "Bão hòa thấp, tối sâu, ám xanh lam",
+      hl: -1, sh: 2, con: -0.05, sat: -3, skin: 0.8, gr: 0.25, fade: 0.025, st: [-0.016, 0.006, 0.016], ht: [0.01, 0.004, -0.008],
+      hsl: [[120, 18, -0.3, -0.03], [215, -10, -0.1, -0.03]] }),
+    R({ id: "rung", name: "Rừng Xanh Trầm", note: "Xanh lá sâu, vùng sáng trung tính",
+      hl: 0, sh: 1, con: 0.1, sat: 0, cd: 1.2, gr: 0.2,
+      hsl: [[120, -8, 0.1, -0.12], [60, -10, -0.1, -0.05], [215, -6, -0.1, -0.03]] }),
+    R({ id: "bw", name: "Đen Trắng Nghệ Thuật", note: "Lọc vàng, hạt mịn", hl: 1, sh: 2, con: 0.15, gr: 0.4, gs: 1.2, mono: "yellow", warm: 0.08 }),
+    R({ id: "bwdo", name: "Đen Trắng Tương Phản", note: "Lọc đỏ, trời tối, hạt thô", hl: 2, sh: 3, con: 0.22, gr: 0.55, gs: 1.6, mono: "red", warm: 0 }),
+    R({ id: "goc", name: "Không màu phim", skin: 0, gr: 0 })
   ];
   const MONO_W = { yellow: [0.4, 0.5, 0.1], red: [0.6, 0.35, 0.05], green: [0.25, 0.65, 0.1], none: [0.299, 0.587, 0.114] };
   const store = {
@@ -22,15 +42,14 @@
   };
   let custom = store.get("fcs.custom", []);
   const allRecipes = () => BUILTIN.concat(custom);
-  const clone = o => JSON.parse(JSON.stringify(o));
 
   // ---------------- WebGL renderer ----------------
   const VS = `attribute vec2 aPos; uniform float uMirror; varying vec2 vUv;
     void main(){ vec2 uv = aPos * 0.5 + 0.5; if (uMirror > 0.5) uv.x = 1.0 - uv.x; vUv = uv; gl_Position = vec4(aPos, 0.0, 1.0); }`;
   const FS = `precision highp float;
     varying vec2 vUv; uniform sampler2D uTex;
-    uniform float uHl, uSh, uCon, uSat, uSkin, uCd, uWr, uWb, uGr, uGs, uEv, uMono, uWarm, uOrig;
-    uniform vec3 uMonoW; uniform vec4 uBand[3]; uniform vec2 uRes;
+    uniform float uHl, uSh, uCon, uSat, uSkin, uCd, uBlue, uWr, uWb, uGr, uGs, uEv, uMono, uWarm, uOrig, uFade;
+    uniform vec3 uMonoW, uSt, uHt; uniform vec4 uBand[6]; uniform vec2 uRes;
     vec3 rgb2hsl(vec3 c){ float mx=max(c.r,max(c.g,c.b)), mn=min(c.r,min(c.g,c.b)); float l=(mx+mn)*0.5; float h=0.0, s=0.0;
       if (mx-mn > 1e-5) { float d=mx-mn; s = l>0.5 ? d/(2.0-mx-mn) : d/(mx+mn);
         if (mx==c.r) h=(c.g-c.b)/d + (c.g<c.b?6.0:0.0); else if (mx==c.g) h=(c.b-c.r)/d+2.0; else h=(c.r-c.g)/d+4.0; h*=60.0; }
@@ -43,24 +62,38 @@
     void main(){
       vec3 c = texture2D(uTex, vUv).rgb;
       if (uOrig > 0.5) { gl_FragColor = vec4(c, 1.0); return; }
-      vec3 lin = pow(c, vec3(2.2)) * exp2(uEv); c = pow(clamp(lin, 0.0, 1.0), vec3(1.0/2.2));
-      c.r *= 1.0 + uWr*0.018; c.b *= 1.0 + uWb*0.018;
-      float L = clamp(dot(c, vec3(0.2126,0.7152,0.0722)), 0.0, 1.0);
-      float L2 = L + uHl/4.0*smoothstep(0.5,1.0,L)*(L-0.5)*0.6 + uSh/4.0*(1.0-smoothstep(0.0,0.5,L))*(L-0.5)*0.6;
-      L2 = clamp(0.5 + (L2-0.5)*(1.0+uCon), 0.0, 1.0);
-      c = clamp(c * (L > 0.001 ? L2/L : 1.0), 0.0, 1.0);
+      // 1) linearise, exposure, white balance (in linear light)
+      vec3 lin = pow(c, vec3(2.2)) * exp2(uEv);
+      lin.r *= 1.0 + uWr*0.025; lin.b *= 1.0 + uWb*0.025;
+      // 2) tone in log2 stops around mid-grey: shadow / highlight slopes + contrast, soft shoulder
+      float Y = max(dot(lin, vec3(0.2126,0.7152,0.0722)), 1e-5);
+      float x = log2(Y/0.18);
+      x *= (x < 0.0 ? 1.0 + uSh*0.11 : 1.0 + uHl*0.11) * (1.0 + uCon);
+      float Y2 = 0.18*exp2(x);
+      if (Y2 > 0.75) Y2 = 0.75 + 0.25*(1.0 - exp(-(Y2-0.75)/0.25));
+      lin *= Y2/Y;
+      c = pow(clamp(lin, 0.0, 1.0), vec3(1.0/2.2));
       if (uMono > 0.5) {
-        float m = clamp(dot(c, uMonoW), 0.0, 1.0); float wc = uWarm*0.05;
+        float m = clamp(dot(c, uMonoW), 0.0, 1.0); float wc = uWarm*0.06;
         c = vec3(clamp(m + wc*m, 0.0, 1.0), m, clamp(m - wc*m, 0.0, 1.0));
       } else {
+        // 3) per-hue bands, saturation with skin protection, colour depth (warm hues) and blue depth
         vec3 h = rgb2hsl(c);
-        for (int i = 0; i < 3; i++) { vec4 b = uBand[i]; float w = max(0.0, 1.0 - hd(h.x, b.x)/45.0) * smoothstep(0.05, 0.25, h.y);
-          h.x += b.y*w; h.y = clamp(h.y*(1.0+b.z*w), 0.0, 1.0); h.z = clamp(h.z + b.w*w*0.25, 0.0, 1.0); }
-        float skinW = uSkin * max(0.0, 1.0 - hd(h.x, 25.0)/25.0);
+        float chroma = smoothstep(0.04, 0.22, h.y);
+        for (int i = 0; i < 6; i++) { vec4 b = uBand[i]; float w = max(0.0, 1.0 - hd(h.x, b.x)/40.0) * chroma;
+          h.x += b.y*w; h.y = clamp(h.y*(1.0+b.z*w), 0.0, 1.0); h.z = clamp(h.z + b.w*w, 0.0, 1.0); }
+        float skinW = uSkin * max(0.0, 1.0 - hd(h.x, 25.0)/22.0);
         h.y = clamp(h.y * (1.0 + (uSat-1.0)*(1.0-skinW)), 0.0, 1.0);
-        h.z = clamp(h.z * (1.0 - uCd*0.12*smoothstep(0.35, 0.9, h.y)), 0.0, 1.0);
+        float warmW = max(0.0, 1.0 - hd(h.x, 30.0)/60.0);
+        h.z = clamp(h.z * (1.0 - uCd*0.16*smoothstep(0.3, 0.85, h.y)*(0.35 + 0.65*warmW)), 0.0, 1.0);
+        h.z = clamp(h.z * (1.0 - uBlue*0.18*smoothstep(0.25, 0.8, h.y)*max(0.0, 1.0 - hd(h.x, 215.0)/35.0)), 0.0, 1.0);
         c = hsl2rgb(h);
+        // 4) split toning
+        float Lt = dot(c, vec3(0.2126,0.7152,0.0722));
+        c += uSt*(1.0 - smoothstep(0.0, 0.45, Lt)) + uHt*smoothstep(0.5, 1.0, Lt);
       }
+      // 5) faded blacks (print look)
+      c = uFade + c*(1.0 - uFade);
       if (uGr > 0.0) { vec2 cell = floor(vUv*uRes/uGs); float n = hash(cell) - 0.5;
         float Lg = dot(c, vec3(0.2126,0.7152,0.0722)); c += n * uGr*0.16*(0.35 + 2.6*Lg*(1.0-Lg)); }
       gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);
@@ -82,7 +115,7 @@
     [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]
       .forEach(([k, v]) => gl.texParameteri(gl.TEXTURE_2D, k, v));
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    const U = {}; ["uHl","uSh","uCon","uSat","uSkin","uCd","uWr","uWb","uGr","uGs","uEv","uMono","uWarm","uOrig","uMonoW","uBand","uRes","uMirror"]
+    const U = {}; ["uHl","uSh","uCon","uSat","uSkin","uCd","uBlue","uWr","uWb","uGr","uGs","uEv","uMono","uWarm","uOrig","uFade","uMonoW","uSt","uHt","uBand","uRes","uMirror"]
       .forEach(n => U[n] = gl.getUniformLocation(prog, n));
     this.maxTex = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), 4096);
     this.upload = src => { gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); };
@@ -92,7 +125,9 @@
       gl.uniform1f(U.uSkin, R.skin || 0); gl.uniform1f(U.uCd, R.cd); gl.uniform1f(U.uWr, R.wr); gl.uniform1f(U.uWb, R.wb);
       gl.uniform1f(U.uGr, R.gr); gl.uniform1f(U.uGs, Math.max(1, R.gs * (opts.grainBase || w) / 1000)); gl.uniform1f(U.uEv, R.ev || 0);
       gl.uniform1f(U.uMono, R.mono ? 1 : 0); gl.uniform1f(U.uWarm, R.warm || 0); gl.uniform3fv(U.uMonoW, MONO_W[R.mono || "none"]);
-      const bands = new Float32Array(12); (R.hsl || []).slice(0, 3).forEach((b, i) => bands.set(b, i * 4)); gl.uniform4fv(U.uBand, bands);
+      const bands = new Float32Array(24); (R.hsl || []).slice(0, 6).forEach((b, i) => bands.set(b, i * 4)); gl.uniform4fv(U.uBand, bands);
+      gl.uniform1f(U.uBlue, R.blue || 0); gl.uniform1f(U.uFade, R.fade || 0);
+      gl.uniform3fv(U.uSt, R.st || [0, 0, 0]); gl.uniform3fv(U.uHt, R.ht || [0, 0, 0]);
       gl.uniform2f(U.uRes, w, h); gl.uniform1f(U.uOrig, opts.original ? 1 : 0); gl.uniform1f(U.uMirror, opts.mirror ? 1 : 0);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
@@ -248,6 +283,7 @@
   function selectRecipe(id) {
     const r = allRecipes().find(x => x.id === id) || BUILTIN[0];
     baseId = r.id; recipe = clone(r); store.set("fcs.recipe", baseId);
+    $("title").textContent = r.note || r.name;
     document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.id === baseId)));
     $("resetRecipe").textContent = r.custom ? "Xóa công thức" : "Đặt lại";
     syncControls(); renderEdit(); updateHud();

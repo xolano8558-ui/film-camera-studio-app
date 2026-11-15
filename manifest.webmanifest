@@ -1,0 +1,16 @@
+{
+  "name": "Film Camera Studio",
+  "short_name": "Film Cam",
+  "description": "Máy ảnh màu phim: camera trực tiếp, 5 công thức màu, xử lý ngay trên máy.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#141412",
+  "theme_color": "#141412",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
